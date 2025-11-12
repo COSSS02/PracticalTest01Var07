@@ -14,19 +14,20 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import java.lang.Thread.sleep
 import kotlin.toString
 
 class PracticalTest01Var07MainActivity : AppCompatActivity() {
-    private var text1: EditText? = null
-    private var text2: EditText? = null
-    private var text3: EditText? = null
-    private var text4: EditText? = null
+    public var text1: EditText? = null
+    public var text2: EditText? = null
+    public var text3: EditText? = null
+    public var text4: EditText? = null
     private var setButton: Button? = null
     private var randomButton: Button? = null
     private var checkButton: Button? = null
     private var random = java.util.Random()
     private var serviceOff = true
-//    private val messageBroadcastReceiver = MessageBroadcastReceiver()
+    private val messageBroadcastReceiver = MessageBroadcastReceiver()
     private var intentFilter: IntentFilter? = IntentFilter()
     private var result: Int = 0
 
@@ -40,9 +41,7 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
             insets
         }
 
-//        for (action in Constants.ACTION_TYPES) {
-//            intentFilter?.addAction(action)
-//        }
+        intentFilter?.addAction("BROADCAST_ACTION")
 
         text1 = findViewById(R.id.text1)
         text2 = findViewById(R.id.text2)
@@ -63,7 +62,13 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
             if(savedInstanceState.containsKey("result")) {
                 result = (savedInstanceState.getInt("result"))
         }
-    }
+        }
+
+        if(serviceOff) {
+            intent = Intent(this@PracticalTest01Var07MainActivity, PracticalTest01Var07Service::class.java)
+            startService(intent)
+            serviceOff= false
+        }
     }
 
     private inner class ButtonClickListener : View.OnClickListener {
@@ -108,14 +113,6 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
                     Log.d("result", "Result is $result")
                 }
             }
-
-//            if(leftClicks+rightClicks >= Constants.THRESHOLD && serviceOff) {
-//                intent = Intent(this@PracticalTest01MainActivity, PracticalTest01Service::class.java)
-//                intent.putExtra("firstNumber", leftClicks.toString())
-//                intent.putExtra("secondNumber", rightClicks.toString())
-//                startService(intent)
-//                serviceOff= true
-//            }
         }
     }
 
@@ -142,21 +139,28 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
         }
     }
 //
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    override fun onResume() {
-//        super.onResume()
-//        registerReceiver(messageBroadcastReceiver, intentFilter, RECEIVER_EXPORTED)
-//    }
-//
-//    override fun onPause() {
-//        unregisterReceiver(messageBroadcastReceiver)
-//        super.onPause()
-//    }
-//
-//    override fun onDestroy() {
-//        Log.d("onDestroy", "The activity is being destroyed.")
-//        intent = Intent(this@PracticalTest01MainActivity, PracticalTest01Service::class.java)
-//        stopService(intent)
-//        super.onDestroy()
-//    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onResume() {
+        super.onResume()
+        registerReceiver(messageBroadcastReceiver, intentFilter, RECEIVER_EXPORTED)
+    }
+
+    override fun onPause() {
+        unregisterReceiver(messageBroadcastReceiver)
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        Log.d("onDestroy", "The activity is being destroyed.")
+        intent = Intent(this@PracticalTest01Var07MainActivity, PracticalTest01Var07Service::class.java)
+        stopService(intent)
+        super.onDestroy()
+    }
+
+    public fun updateNums(nr1: Int,nr2: Int,nr3: Int, nr4: Int){
+        text1?.setText(messageBroadcastReceiver.nr1?.toString())
+        text2?.setText(messageBroadcastReceiver.nr2?.toString())
+        text3?.setText(messageBroadcastReceiver.nr3?.toString())
+        text4?.setText(messageBroadcastReceiver.nr4?.toString())
+    }
 }
