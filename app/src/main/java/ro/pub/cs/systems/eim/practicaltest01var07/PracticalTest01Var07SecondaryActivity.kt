@@ -33,16 +33,24 @@ class PracticalTest01Var07SecondaryActivity : AppCompatActivity() {
         text4 = findViewById(R.id.text4)
 
         val intent = intent
-        if (intent != null && intent.hasExtra("numberOfClicks")) {
-            val nr1 = intent.getDoubleExtra("text1", 0.0)
+        if (intent != null && intent.hasExtra("text1")) {
+            val nr1 = intent.getStringExtra("text1")
             text1?.setText(nr1.toString())
-            val nr2 = intent.getDoubleExtra("text2", 0.0)
-            text2?.setText(nr2.toString())
-            val nr3 = intent.getDoubleExtra("text3", 0.0)
-            text3?.setText(nr3.toString())
-            val nr4 = intent.getDoubleExtra("text4", 0.0)
-            text4?.setText(nr4.toString())
         }
+        if (intent != null && intent.hasExtra("text2")) {
+            val nr2 = intent.getStringExtra("text2")
+            text2?.setText(nr2.toString())
+        }
+
+        if (intent != null && intent.hasExtra("text3")) {
+            val nr3 = intent.getStringExtra("text3")
+            text3?.setText(nr3.toString())
+        }
+
+            if (intent != null && intent.hasExtra("text4")) {
+        val nr4 = intent.getStringExtra("text4")
+        text4?.setText(nr4.toString())
+            }
 
         sumButton = findViewById(R.id.sum_button)
         sumButton?.setOnClickListener(ButtonClickListener())

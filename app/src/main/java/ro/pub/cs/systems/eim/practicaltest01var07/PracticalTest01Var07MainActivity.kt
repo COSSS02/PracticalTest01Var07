@@ -2,6 +2,7 @@ package ro.pub.cs.systems.eim.practicaltest01var07
 
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,9 +10,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlin.toString
 
 class PracticalTest01Var07MainActivity : AppCompatActivity() {
     private var text1: EditText? = null
@@ -20,9 +23,12 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
     private var text4: EditText? = null
     private var setButton: Button? = null
     private var randomButton: Button? = null
+    private var checkButton: Button? = null
+    private var random = java.util.Random()
     private var serviceOff = true
 //    private val messageBroadcastReceiver = MessageBroadcastReceiver()
     private var intentFilter: IntentFilter? = IntentFilter()
+    private var result: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,27 +55,19 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
         randomButton  = findViewById(R.id.random_button)
         randomButton?.setOnClickListener(ButtonClickListener())
 
-//        if (savedInstanceState != null) {
-//            Log.d("onCreate", "savedInstanceState is not null")
-//            if(savedInstanceState.containsKey("left_edit_text")) {
-//                leftEditText?.setText(savedInstanceState.getString("left_edit_text"))
-//            } else {
-//                leftEditText?.setText("0")
-//            }
-//
-//            if(savedInstanceState.containsKey("right_edit_text")) {
-//                rightEditText?.setText(savedInstanceState.getString("right_edit_text"))
-//            } else {
-//                rightEditText?.setText("0")
-//            }
-//        } else {
-//            Log.d("onCreate", "savedInstanceState is null")
-//            leftEditText?.setText("0")
-//            rightEditText?.setText("0")
-//        }
+        checkButton  = findViewById(R.id.check_result)
+        checkButton?.setOnClickListener(ButtonClickListener())
+
+        if (savedInstanceState != null) {
+            Log.d("onCreate", "savedInstanceState is not null")
+            if(savedInstanceState.containsKey("result")) {
+                result = (savedInstanceState.getInt("result"))
+        }
+    }
     }
 
     private inner class ButtonClickListener : View.OnClickListener {
+        @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
         override fun onClick(view: android.view.View?) {
             when (view?.id) {
                 R.id.set_button -> {
@@ -85,25 +83,30 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
                 }
                 R.id.random_button -> {
                     val s1 = text1?.text.toString()
-                    if (!s1.isEmpty() || s1.toDouble().isNaN()) {
-                        text1?.setText((0..100).random().toString())
+                    if (s1.toDoubleOrNull() == null) {
+                        text1?.setText(random.nextDouble(10.0).toString())
                     }
 
                     val s2 = text2?.text.toString()
-                    if (!s2.isEmpty() || s2.toDouble().isNaN()) {
-                        text2?.setText((0..100).random().toString())
+                    if (s2.toDoubleOrNull() == null) {
+                        text2?.setText(random.nextDouble(10.0).toString())
                     }
 
                     val s3 = text3?.text.toString()
-                    if (!s3.isEmpty() || s3.toDouble().isNaN()) {
-                        text3?.setText((0..100).random().toString())
+                    if (s3.toDoubleOrNull() == null) {
+                        text3?.setText(random.nextDouble(10.0).toString())
                     }
 
                     val s4 = text4?.text.toString()
-                    if (!s4.isEmpty() || s4.toDouble().isNaN()) {
-                        text4?.setText((0..100).random().toString())
+                    if (s4.toDoubleOrNull() == null) {
+                        text4?.setText(random.nextDouble(10.0).toString())
                     }
-            }
+                }
+
+                R.id.check_result -> {
+                    Toast.makeText(this@PracticalTest01Var07MainActivity, "The activity returned with result $result", Toast.LENGTH_LONG).show()
+                    Log.d("result", "Result is $result")
+                }
             }
 
 //            if(leftClicks+rightClicks >= Constants.THRESHOLD && serviceOff) {
@@ -116,28 +119,26 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
         }
     }
 
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        Log.d("onSaveInstanceState", "Saving instance state")
-//        super.onSaveInstanceState(outState)
-//        outState.putString("left_edit_text", leftEditText?.text.toString())
-//        outState.putString("right_edit_text", rightEditText?.text.toString())
-//    }
-//
-//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-//        Log.d("onRestoreInstanceState", "Restoring instance state")
-//        super.onRestoreInstanceState(savedInstanceState)
-//        if(savedInstanceState.containsKey("left_edit_text")) {
-//            leftEditText?.setText(savedInstanceState.getString("left_edit_text"))
-//        }
-//        if(savedInstanceState.containsKey("right_edit_text")) {
-//            rightEditText?.setText(savedInstanceState.getString("right_edit_text"))
-//        }
-//    }
-//
+    override fun onSaveInstanceState(outState: Bundle) {
+        Log.d("onSaveInstanceState", "Saving instance state")
+        super.onSaveInstanceState(outState)
+        outState.putInt("result", result)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        Log.d("onRestoreInstanceState", "Restoring instance state")
+        super.onRestoreInstanceState(savedInstanceState)
+        if(savedInstanceState.containsKey("result")) {
+            result = (savedInstanceState.getInt("result"))
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == Constants.SECONDARY_ACTIVITY_REQUEST_CODE) {
             Toast.makeText(this, "The activity returned with result $resultCode", Toast.LENGTH_LONG).show()
+            Log.d("result","Result is $resultCode")
+            result = resultCode
         }
     }
 //
