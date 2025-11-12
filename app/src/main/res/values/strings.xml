@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">PracticalTest01Var07</string>
+    <string name="set">Set</string>
+    <string name="random">Random</string>
+    <string name="product">Product</string>
+    <string name="sum">Sum</string>
+</resources>
